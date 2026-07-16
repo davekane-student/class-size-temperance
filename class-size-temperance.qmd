@@ -1,0 +1,103 @@
+---
+title: "Class Size: Temperance"
+format:
+  html: default
+execute:
+  echo: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(tidymodels)
+library(broom)
+library(marginaleffects)
+
+star <- read_csv("data/class-size.csv", show_col_types = FALSE) |>
+  mutate(kind = recode(classtype,
+                       `1` = "small",
+                       `2` = "regular",
+                       `3` = "regular with aid")) |>
+  mutate(race = recode(race,
+                       `1` = "White",
+                       `2` = "Black",
+                       `3` = "Others",
+                       `4` = "Others",
+                       `5` = "Others",
+                       `6` = "Others")) |>
+  select(g4math, kind, race, yearssmall)
+
+# Carried forward from Courage: the data generating mechanism.
+fit_classsize <- linear_reg() |>
+  fit(g4math ~ kind + race + yearssmall, data = star)
+```
+
+## The Question
+
+The Tennessee STAR experiment (Mosteller 1995) randomly assigned more than 6,000 students in about 80 Tennessee schools to small classes (13–17 students), regular classes (22–25), or regular classes with a teacher's aide, from kindergarten through third grade. Our data records each student's kindergarten class-type assignment, race, years spent in small classes across grades K through 3, and fourth-grade score on the math computation portion of the Stanford Achievement Test.
+
+Imagine you work for the Texas Department of Education. You want to understand the effect of small classes on student performance in Dallas. In Texas, there is data available like the data in the STAR project.
+
+The Texas Department of Education asks: What is the average causal effect of assigning a Dallas student to a small class on their fourth-grade math score?
+
+The setup chunk of this document carries forward the work from Courage: the fitted model `fit_classsize` is already built, so today starts at the answering.
+
+## Temperance
+
+### Predictions
+
+Use `predictions(fit_classsize)` to estimate the math score for individual students in the sample.
+
+
+
+Use `avg_predictions(fit_classsize, by = "kind")` to estimate the average math score for each class type.
+
+
+
+What is the expected math score for a student in a small class (with 95% CI)?
+
+
+
+What is the expected math score for a student in a regular class (with 95% CI)?
+
+
+
+### Comparisons
+
+Use `avg_comparisons(fit_classsize, variables = "kind")` to estimate the effect of each class type, relative to a regular class, on math scores.
+
+
+
+Use `avg_comparisons(fit_classsize, variables = "yearssmall")` to estimate the effect of one additional year spent in a small class.
+
+
+
+### Visualizations
+
+Create a visualization of the average predictions by class type using `plot_predictions()`.
+
+
+
+What measure of uncertainty is shown in this plot?
+
+
+
+Create a plot showing predicted math scores by class type and race.
+
+
+
+### Interpretation
+
+How should the Texas Department of Education interpret these estimates?
+
+
+
+### Humility
+
+Besides the average math scores, identify two additional quantities of interest the Texas Department of Education might care about.
+
+
+
+Why might these estimates be a poor answer to the Department's question? Identify at least two possible sources of bias.
