@@ -50,7 +50,17 @@ The setup chunk of this document carries forward the work from Courage: the fitt
 
 Use `predictions(fit_classsize)` to estimate the math score for individual students in the sample.
 
+```{r}
+predictions(fit_classsize)
+```
 
+
+```{r}
+predictions(fit_classsize) |>
+as_tibble() |>
+select(kind, race, yearssmall, estimate, conf.low, conf.high) |>
+head(6)
+```
 
 Use `avg_predictions(fit_classsize, by = "kind")` to estimate the average math score for each class type.
 
